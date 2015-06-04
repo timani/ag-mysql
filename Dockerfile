@@ -2,8 +2,13 @@ FROM fedora:21
 MAINTAINER Pantheon Systems
 
 RUN yum -y update && yum clean all
-RUN yum -y install redis && yum clean all
+RUN yum -y install mariadb-server pwgen psmisc net-tools hostname && \
+    yum clean all
 
-EXPOSE 6379
+ADD scripts /scripts
+RUN chmod 755 /scripts/*
 
-CMD [ "redis-server" ]
+VOLUME ["/var/lib/mysql", "/var/log/mysql"]
+EXPOSE 3306
+
+CMD ["/bin/bash", "/scripts/start.sh"]
